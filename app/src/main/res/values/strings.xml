@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Popular Movies</string>
+    <string name="action_settings">Settings</string>
+
+    <style name="content_description">Movie Poster</style>
+
+    <string name="title_activity_movie_detal">MovieDetal</string>
+    <string name="title_activity_movie_detail">MovieDetail</string>
+    <string name="vote_average">%.2f /10</string>
+</resources>
