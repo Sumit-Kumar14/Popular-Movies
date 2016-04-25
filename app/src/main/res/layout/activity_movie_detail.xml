@@ -21,18 +21,16 @@
     </android.support.design.widget.AppBarLayout>
 
     <ScrollView
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fitsSystemWindows="true">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="400dp"
                 android:id="@+id/poster"
                 android:scaleType="fitXY"
                 android:adjustViewBounds="true" />
@@ -45,8 +43,7 @@
                 android:paddingEnd="64dp"
                 android:paddingTop="16dp"
                 android:paddingBottom="16dp"
-                android:background="@color/blue_gray"
-                android:layout_below="@+id/poster">
+                android:background="@color/blue_gray">
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

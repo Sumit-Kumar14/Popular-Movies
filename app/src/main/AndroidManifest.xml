@@ -22,9 +22,16 @@
         </activity>
         <activity
             android:name=".MovieDetail"
-            android:label="@string/title_activity_movie_detail"
+            android:label="@string/detail"
             android:parentActivityName=".PopularMovies"
             android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.infinity.dev.popularmovies.PopularMovies" />
+        </activity>
+        <activity android:name=".SettingsActivity"
+            android:parentActivityName=".PopularMovies"
+            android:label="@string/settings">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.infinity.dev.popularmovies.PopularMovies" />

@@ -2,9 +2,8 @@ package com.infinity.dev.popularmovies;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -19,8 +18,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
-
 public class PopularMovies extends AppCompatActivity implements FetchDataListener{
 
     private static final String TAG = PopularMovies.class.getSimpleName();
@@ -28,6 +25,7 @@ public class PopularMovies extends AppCompatActivity implements FetchDataListene
     GridView moviesGrid;
     CustomAdapter adapter;
     boolean loading = true;
+    SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +48,6 @@ public class PopularMovies extends AppCompatActivity implements FetchDataListene
                 if(!loading && firstVisibleItem + visibleItemCount >= totalItemCount){
                     if(resultObj.getPage() < resultObj.getTotalPages()){
                         loading = true;
-                        Log.d("TAG", "http://api.themoviedb.org/3/movie/popular?api_key=" + Contants.API_KEY + "&page=" + (resultObj.getPage() + 1));
                         new FetchDataTask(PopularMovies.this, PopularMovies.this).execute("http://api.themoviedb.org/3/movie/popular?api_key=" + Contants.API_KEY + "&page=" + (resultObj.getPage() + 1));
                     }
                 }
@@ -64,25 +61,34 @@ public class PopularMovies extends AppCompatActivity implements FetchDataListene
                 startActivity(detailIntent);
             }
         });
+
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
+        if(swipeRefreshLayout != null) {
+            swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimary, R.color.green);
+            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    swipeRefreshLayout.setRefreshing(true);
+                    new FetchDataTask(PopularMovies.this, PopularMovies.this).execute("http://api.themoviedb.org/3/movie/popular?api_key=" + Contants.API_KEY + "&page=" + 1);
+                }
+            });
+        }
         new FetchDataTask(this, this).execute("http://api.themoviedb.org/3/movie/popular?api_key=" + Contants.API_KEY + "&page=" + 1);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_popular_movies, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent settingsIntent = new Intent(this, SettingsActivity.class);
+            startActivity(settingsIntent);
             return true;
         }
 
@@ -91,6 +97,11 @@ public class PopularMovies extends AppCompatActivity implements FetchDataListene
 
     @Override
     public void onFetchCompletion(String string) {
+        swipeRefreshLayout.setRefreshing(false);
+        if(string == null) {
+            Toast.makeText(this, R.string.network_error, Toast.LENGTH_SHORT).show();
+            return;
+        }
         loading = false;
         try{
             JSONObject root = new JSONObject(string);
@@ -128,10 +139,5 @@ public class PopularMovies extends AppCompatActivity implements FetchDataListene
             Log.e(TAG, ex.getMessage());
             ex.printStackTrace();
         }
-    }
-
-    @Override
-    public void onError(Exception ex) {
-        Toast.makeText(this, ex.getMessage(), Toast.LENGTH_SHORT).show();
     }
 }

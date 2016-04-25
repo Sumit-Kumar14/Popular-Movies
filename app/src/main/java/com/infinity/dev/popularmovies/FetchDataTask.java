@@ -55,8 +55,7 @@ public class FetchDataTask extends AsyncTask<String, Void, String>{
             }
             jsonString = buffer.toString();
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Error ", e);
-            listener.onError(e);
+            Log.e(LOG_TAG, e.getMessage());
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -65,7 +64,7 @@ public class FetchDataTask extends AsyncTask<String, Void, String>{
                 try {
                     reader.close();
                 } catch (final IOException e) {
-                    Log.e(LOG_TAG, "Error closing stream", e);
+                    Log.e(LOG_TAG, e.getMessage());
                 }
             }
         }
