@@ -2,6 +2,10 @@ package com.infinity.dev.popularmovies;
 
 import java.io.Serializable;
 
+/**
+ * MovieContract class is a contract to hold movies data returned by the server.
+ */
+
 public class MovieContract implements Serializable{
     private String poster_path;
     private boolean adult;

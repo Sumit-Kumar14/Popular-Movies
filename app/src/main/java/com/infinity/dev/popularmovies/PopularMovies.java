@@ -1,7 +1,9 @@
 package com.infinity.dev.popularmovies;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -27,6 +29,8 @@ public class PopularMovies extends AppCompatActivity implements FetchDataListene
     boolean loading = true;
     SwipeRefreshLayout swipeRefreshLayout;
 
+    String sortOrder;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +52,7 @@ public class PopularMovies extends AppCompatActivity implements FetchDataListene
                 if(!loading && firstVisibleItem + visibleItemCount >= totalItemCount){
                     if(resultObj.getPage() < resultObj.getTotalPages()){
                         loading = true;
-                        new FetchDataTask(PopularMovies.this, PopularMovies.this).execute("http://api.themoviedb.org/3/movie/popular?api_key=" + Contants.API_KEY + "&page=" + (resultObj.getPage() + 1));
+                        new FetchDataTask(PopularMovies.this, PopularMovies.this).execute("http://api.themoviedb.org/3/" + sortOrder + "?api_key=" + Constants.API_KEY + "&page=" + (resultObj.getPage() + 1));
                     }
                 }
             }
@@ -69,11 +73,29 @@ public class PopularMovies extends AppCompatActivity implements FetchDataListene
                 @Override
                 public void onRefresh() {
                     swipeRefreshLayout.setRefreshing(true);
-                    new FetchDataTask(PopularMovies.this, PopularMovies.this).execute("http://api.themoviedb.org/3/movie/popular?api_key=" + Contants.API_KEY + "&page=" + 1);
+                    updateMovieGrid();
                 }
             });
         }
-        new FetchDataTask(this, this).execute("http://api.themoviedb.org/3/movie/popular?api_key=" + Contants.API_KEY + "&page=" + 1);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        sortOrder = prefs.getString(getString(R.string.pref_key),
+                getString(R.string.movie_popular));
+        updateMovieGrid();
+    }
+
+    private void updateMovieGrid() {
+        //Scroll to the first element in the grid
+        moviesGrid.setSelection(0);
+        //Clear the previous movies list
+        resultObj.getMoviesList().clear();
+        //Set the current viewing page to 1
+        resultObj.setPage(1);
+        new FetchDataTask(this, this).execute("http://api.themoviedb.org/3/" + sortOrder + "?api_key=" + Constants.API_KEY + "&page=" + 1);
     }
 
     @Override

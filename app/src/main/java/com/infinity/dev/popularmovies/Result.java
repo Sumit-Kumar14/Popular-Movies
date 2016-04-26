@@ -3,6 +3,12 @@ package com.infinity.dev.popularmovies;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Result class will contain the raw JSON data that came from the server.
+ * Its structure is similar to the result returned by the server by querying
+ * /movie/popular or /movie/top_rated.
+ */
+
 public class Result{
     private int page;
     private int totalResults;
