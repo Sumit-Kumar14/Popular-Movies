@@ -11,12 +11,12 @@ import java.util.List;
 
 public class Result{
     private int page;
-    private int totalResults;
-    private int totalPages;
-    private List<MovieContract> moviesList;
+    private int total_results;
+    private int total_pages;
+    private List<MovieContract> results;
 
     public Result(){
-        this.moviesList = new ArrayList<>();
+        this.results = new ArrayList<>();
     }
 
     public int getPage() {
@@ -27,27 +27,27 @@ public class Result{
         this.page = page;
     }
 
-    public int getTotalResults() {
-        return totalResults;
-    }
-
-    public void setTotalResults(int totalResults) {
-        this.totalResults = totalResults;
-    }
-
-    public int getTotalPages() {
-        return totalPages;
-    }
-
-    public void setTotalPages(int totalPages) {
-        this.totalPages = totalPages;
-    }
-
     public List<MovieContract> getMoviesList() {
-        return moviesList;
+        return results;
     }
 
     public void setMoviesList(List<MovieContract> moviesList) {
-        this.moviesList = moviesList;
+        this.results = moviesList;
+    }
+
+    public int getTotal_results() {
+        return total_results;
+    }
+
+    public void setTotal_results(int total_results) {
+        this.total_results = total_results;
+    }
+
+    public int getTotal_pages() {
+        return total_pages;
+    }
+
+    public void setTotal_pages(int total_pages) {
+        this.total_pages = total_pages;
     }
 }

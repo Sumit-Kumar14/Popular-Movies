@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
@@ -43,6 +44,8 @@ public class CustomAdapter extends BaseAdapter{
         if(convertView == null)
             convertView = inflater.inflate(R.layout.movies_grid_item, parent,false);
 
+        TextView name = (TextView) convertView.findViewById(R.id.title);
+        name.setText(list.get(position).getOriginal_title());
         ImageView poster = (ImageView) convertView.findViewById(R.id.moviePoster);
         String BASE_URL = "http://image.tmdb.org/t/p/";
         String SIZE = "w185";

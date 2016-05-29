@@ -17,4 +17,6 @@
     <string name="top_rated">Top Rated</string>
     <string name="movie_popular">movie/popular</string>
     <string name="movie_top_rated">movie/top_rated</string>
+    <string name="title_activity_main">Movies</string>
+    <string name="section_format">Hello World from section: %1$d</string>
 </resources>
