@@ -26,12 +26,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Bundle popularData = new Bundle();
-        popularData.putString("TYPE", "popular");
+        popularData.putString("TYPE", "POPULAR");
         popular = new PlaceholderFragment();
         popular.setArguments(popularData);
 
         Bundle topRatedData = new Bundle();
-        topRatedData.putString("TYPE", "top_rated");
+        topRatedData.putString("TYPE", "TOP_RATED");
         topRated = new PlaceholderFragment();
         topRated.setArguments(topRatedData);
 
