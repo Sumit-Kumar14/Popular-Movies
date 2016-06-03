@@ -22,7 +22,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MovieDetail extends AppCompatActivity {
 
-    View view;
     TextView genre;
     TextView movieName;
     RatingBar ratingBar;
@@ -34,7 +33,6 @@ public class MovieDetail extends AppCompatActivity {
     TextView duration;
     TextView releaseDate;
     TextView tagline;
-    int movieId;
 
     private static final String BASE_URL = "http://image.tmdb.org/t/p/";
     private static final String SIZE = "w500";
@@ -79,6 +77,20 @@ public class MovieDetail extends AppCompatActivity {
                 Picasso.with(MovieDetail.this).load(BASE_URL + THUMBNAIL_SIZE + response.body().getPoster_path()).into(thumbnail);
                 ratingBar.setRating((float)(response.body().getVote_average()/2));
                 year.setText(response.body().getRelease_date());
+                StringBuilder genreStr = new StringBuilder();
+                MovieContract.Genres[] genreArray = response.body().getGenres();
+                for (int i = 0; i < genreArray.length; i++) {
+                    genreStr.append(genreArray[i].getName());
+                    if (i < genreArray.length - 1)
+                        genreStr.append(" | ");
+                }
+                censor.setText(response.body().isAdult() ? "A" : "UA");
+                genre.setText(genreStr.toString());
+                if(response.body().getTagline() != null || response.body().getTagline().length() != 0)
+                    tagline.setText(response.body().getTagline());
+                else
+                    tagline.setText("N/A");
+                duration.setText(response.body().getRuntime() / 60 + " hrs " + response.body().getRuntime() % 60 + " mins");
             }
 
             @Override
@@ -86,5 +98,21 @@ public class MovieDetail extends AppCompatActivity {
                 t.printStackTrace();
             }
         });
+
+        GenericFragment videos = new GenericFragment();
+        Bundle videoBundle = new Bundle();
+        videoBundle.putString("TYPE", "VIDEOS");
+        videoBundle.putString("HEADING", "Movie Trailers");
+        videoBundle.putString("ID", id);
+        videos.setArguments(videoBundle);
+        getSupportFragmentManager().beginTransaction().replace(R.id.video_frames, videos).commit();
+
+        GenericFragment casts = new GenericFragment();
+        Bundle castBundle = new Bundle();
+        castBundle.putString("TYPE", "CASTS");
+        castBundle.putString("HEADING", "Casting");
+        castBundle.putString("ID", id);
+        videos.setArguments(castBundle);
+        getSupportFragmentManager().beginTransaction().replace(R.id.casting, casts).commit();
     }
 }

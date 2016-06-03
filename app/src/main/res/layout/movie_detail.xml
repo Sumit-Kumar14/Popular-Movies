@@ -41,7 +41,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#43a047"
-                android:paddingBottom="12dp"
                 android:orientation="vertical">
                 <TextView
                     android:layout_width="match_parent"
@@ -52,6 +51,7 @@
                     android:textColor="#FFF"
                     android:textStyle="bold"
                     android:gravity="start|bottom"
+                    android:layout_marginTop="32dp"
                     android:paddingStart="32dp"
                     android:paddingEnd="32dp"
                     android:textSize="16sp" />
@@ -271,9 +271,9 @@
         app:fabSize="normal"
         android:clickable="true"
         android:layout_marginEnd="16dp"
-        android:src="@drawable/ic_info_white_24dp"
+        android:src="@drawable/ic_favorite_border_white_24dp"
         app:layout_anchor="@id/poster"
-        app:backgroundTint="@color/yellow"
+        app:backgroundTint="@color/red"
         app:layout_anchorGravity="bottom|right"
         app:elevation="2dp" />
 </android.support.design.widget.CoordinatorLayout>
