@@ -112,7 +112,13 @@ public class MovieDetail extends AppCompatActivity {
         castBundle.putString("TYPE", "CASTS");
         castBundle.putString("HEADING", "Casting");
         castBundle.putString("ID", id);
-        videos.setArguments(castBundle);
+        casts.setArguments(castBundle);
         getSupportFragmentManager().beginTransaction().replace(R.id.casting, casts).commit();
+
+        ReviewFragment fragment = new ReviewFragment();
+        Bundle reviewBundle = new Bundle();
+        reviewBundle.putString("ID", id);
+        fragment.setArguments(reviewBundle);
+        getSupportFragmentManager().beginTransaction().replace(R.id.reviews, fragment).commit();
     }
 }

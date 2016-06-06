@@ -51,7 +51,7 @@
                     android:textColor="#FFF"
                     android:textStyle="bold"
                     android:gravity="start|bottom"
-                    android:layout_marginTop="32dp"
+                    android:layout_marginTop="16dp"
                     android:paddingStart="32dp"
                     android:paddingEnd="32dp"
                     android:textSize="16sp" />
@@ -258,7 +258,7 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="16dp"
                 android:paddingBottom="16dp"
-                android:id="@+id/similar">
+                android:id="@+id/reviews">
             </FrameLayout>
         </LinearLayout>
     </ScrollView>

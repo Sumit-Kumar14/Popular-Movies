@@ -57,10 +57,19 @@ public class GenericAdapter extends RecyclerView.Adapter<GenericAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.title.setText(((MovieVideosContract.Video)list.get(position)).getName());
-        Picasso.with(context).load("https://img.youtube.com/vi/" + ((MovieVideosContract.Video)list.get(position)).getKey() + "/0.jpg")
-                .error(R.drawable.notfound)
-                .placeholder(R.drawable.movie)
-                .into(holder.poster);
+        Object object = list.get(position);
+        if(object instanceof MovieVideosContract.Video) {
+            holder.title.setText(((MovieVideosContract.Video) object).getName());
+            Picasso.with(context).load("https://img.youtube.com/vi/" + ((MovieVideosContract.Video) list.get(position)).getKey() + "/0.jpg")
+                    .error(R.drawable.notfound)
+                    .placeholder(R.drawable.movie)
+                    .into(holder.poster);
+        }else if(object instanceof CastingContract.Cast) {
+            holder.title.setText(((CastingContract.Cast) object).getName());
+            Picasso.with(context).load("http://image.tmdb.org/t/p/w320" + ((CastingContract.Cast) list.get(position)).getProfile_path())
+                    .error(R.drawable.notfound)
+                    .placeholder(R.drawable.movie)
+                    .into(holder.poster);
+        }
     }
 }

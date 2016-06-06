@@ -18,4 +18,7 @@ public interface MoviesAPI {
 
     @GET("{id}/credits?api_key=" + Constants.API_KEY)
     Call<CastingContract> getCasts(@Path("id") String id);
+
+    @GET("{id}/reviews?api_key=" + Constants.API_KEY)
+    Call<ReviewsContract> getReviews(@Path("id") String id);
 }

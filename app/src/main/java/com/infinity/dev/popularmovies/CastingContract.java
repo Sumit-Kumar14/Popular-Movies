@@ -8,14 +8,14 @@ import java.util.List;
 public class CastingContract {
 
     private String id;
-    private List<Cast> casts;
+    private List<Cast> cast;
 
     public List<Cast> getCasts() {
-        return casts;
+        return cast;
     }
 
     public void setCasts(List<Cast> casts) {
-        this.casts = casts;
+        this.cast = casts;
     }
 
     public class Cast {
