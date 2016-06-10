@@ -57,9 +57,11 @@
                     android:textSize="16sp" />
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp">
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -76,11 +78,12 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/rating"
                         android:numStars="5"
-                        android:layout_margin="16dp"
                         style="?android:attr/ratingBarStyleSmall"
                         android:isIndicator="true"
                         android:focusable="false"
-                        android:clickable="false"/>
+                        android:clickable="false"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp" />
                 </LinearLayout>
             </LinearLayout>
             <com.ms.square.android.expandabletextview.ExpandableTextView

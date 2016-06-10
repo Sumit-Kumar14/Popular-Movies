@@ -15,10 +15,10 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class GenericAdapter extends RecyclerView.Adapter<GenericAdapter.ViewHolder>{
+public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.ViewHolder>{
 
     Context context;
-    List<?> list;
+    List<MovieVideosContract.Video> list;
     LayoutInflater inflater;
 
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -33,7 +33,7 @@ public class GenericAdapter extends RecyclerView.Adapter<GenericAdapter.ViewHold
         }
     }
 
-    public GenericAdapter(Context context, List<?> list){
+    public VideosAdapter(Context context, List<MovieVideosContract.Video> list){
         this.context = context;
         this.list = list;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -51,25 +51,16 @@ public class GenericAdapter extends RecyclerView.Adapter<GenericAdapter.ViewHold
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.display_item, parent, false);
+        View view = inflater.inflate(R.layout.movie_video_detail, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Object object = list.get(position);
-        if(object instanceof MovieVideosContract.Video) {
-            holder.title.setText(((MovieVideosContract.Video) object).getName());
-            Picasso.with(context).load("https://img.youtube.com/vi/" + ((MovieVideosContract.Video) list.get(position)).getKey() + "/0.jpg")
-                    .error(R.drawable.notfound)
-                    .placeholder(R.drawable.movie)
-                    .into(holder.poster);
-        }else if(object instanceof CastingContract.Cast) {
-            holder.title.setText(((CastingContract.Cast) object).getName());
-            Picasso.with(context).load("http://image.tmdb.org/t/p/w320" + ((CastingContract.Cast) list.get(position)).getProfile_path())
-                    .error(R.drawable.notfound)
-                    .placeholder(R.drawable.movie)
-                    .into(holder.poster);
-        }
+        holder.title.setText(list.get(position).getName());
+        Picasso.with(context).load("https://img.youtube.com/vi/" + list.get(position).getKey() + "/0.jpg")
+                .error(R.drawable.notfound)
+                .placeholder(R.drawable.movie)
+                .into(holder.poster);
     }
 }

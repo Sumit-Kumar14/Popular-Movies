@@ -4,7 +4,9 @@ package com.infinity.dev.popularmovies;
  * Created by sumitkumar on 3/6/16.
  */
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -36,7 +38,6 @@ public class GenericFragment extends Fragment {
             .build();
     MoviesAPI api = retrofit.create(MoviesAPI.class);
 
-    GenericAdapter adapter;
     MovieVideosContract videos;
     CastingContract casts;
 
@@ -65,8 +66,14 @@ public class GenericFragment extends Fragment {
                             heading = getArguments().getString("HEADING");
                             header.setText(heading);
 
-                            adapter = new GenericAdapter(context, videos.results);
+                            VideosAdapter adapter = new VideosAdapter(context, videos.results);
                             recyclerView.setAdapter(adapter);
+                            recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(View view, int position) {
+                                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + videos.results.get(position).getKey())));
+                                }
+                            }));
                         }
 
                         @Override
@@ -86,7 +93,7 @@ public class GenericFragment extends Fragment {
                             heading = getArguments().getString("HEADING");
                             header.setText(heading);
 
-                            adapter = new GenericAdapter(context, casts.getCasts());
+                            CastingAdapter adapter = new CastingAdapter(context, casts.getCasts());
                             recyclerView.setAdapter(adapter);
                         }
 

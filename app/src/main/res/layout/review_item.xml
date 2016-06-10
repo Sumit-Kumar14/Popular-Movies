@@ -35,7 +35,7 @@
             android:layout_marginRight="10dp"
             android:textSize="16sp"
             android:id="@+id/name"
-            android:textColor="@color/white" />
+            android:textColor="@color/yellow" />
         <TextView
             android:id="@+id/review"
             android:layout_width="match_parent"
@@ -43,7 +43,7 @@
             android:padding="16dp"
             android:textColor="#CCC"
             android:fontFamily="sans-serif-condensed"
-            android:textSize="15sp"
+            android:textSize="14sp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp" />
     </LinearLayout>

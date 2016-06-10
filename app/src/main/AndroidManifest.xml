@@ -13,11 +13,11 @@
         <activity
             android:name=".MovieDetail"
             android:label="@string/detail"
-            android:parentActivityName=".PopularMovies"
+            android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.infinity.dev.popularmovies.PopularMovies" />
+                android:value="com.infinity.dev.popularmovies.MainActivity" />
         </activity>
         <activity
             android:name=".MainActivity"
