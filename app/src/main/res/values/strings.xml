@@ -8,6 +8,7 @@
     <string name="title_activity_movie_detail">MovieDetail</string>
     <string name="vote_average">%.2f /10</string>
     <string name="network_error">No or poor internet connection</string>
+    <string name="server_error">Something went wrong. Please try again later.</string>
     <string name="settings">Settings</string>
     <string name="detail">Movie Details</string>
 
@@ -21,4 +22,8 @@
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_item_list">Items</string>
     <string name="title_item_detail">Item Detail</string>
+
+    <string name="movie_added">Movie added to your favourite list</string>
+    <string name="movie_removed">Movie removed from your favourite list</string>
+
 </resources>

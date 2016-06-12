@@ -1,7 +1,9 @@
 package com.infinity.dev.popularmovies;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -10,10 +12,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ms.square.android.expandabletextview.ExpandableTextView;
 import com.squareup.picasso.Picasso;
 
+import database.DBHelper;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -22,7 +26,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MovieDetail extends AppCompatActivity {
 
-    TextView genre;
     TextView movieName;
     RatingBar ratingBar;
     TextView year;
@@ -44,6 +47,10 @@ public class MovieDetail extends AppCompatActivity {
             .build();
     MoviesAPI api = retrofit.create(MoviesAPI.class);
 
+    FloatingActionButton save;
+    MovieContract contract;
+    DBHelper helper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +59,6 @@ public class MovieDetail extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        genre = (TextView) findViewById(R.id.genre);
         movieName = (TextView) findViewById(R.id.movie_name);
         ratingBar = (RatingBar) findViewById(R.id.rating);
         year = (TextView) findViewById(R.id.movie_year);
@@ -63,39 +69,75 @@ public class MovieDetail extends AppCompatActivity {
         duration = (TextView) findViewById(R.id.duration);
         releaseDate = (TextView) findViewById(R.id.release);
         tagline = (TextView) findViewById(R.id.tagline);
+        save = (FloatingActionButton) findViewById(R.id.save);
+
+        helper = new DBHelper(this);
 
         Intent intent = getIntent();
-        String id = intent.getStringExtra("ID");
+        final String id = intent.getStringExtra("ID");
 
-        api.getMovieDetails(id).enqueue(new Callback<MovieContract>() {
-            @Override
-            public void onResponse(Call<MovieContract> call, Response<MovieContract> response) {
-                Picasso.with(MovieDetail.this).load(BASE_URL + SIZE + response.body().getPoster_path()).into(poster);
-                movieName.setText(response.body().getOriginal_title());
-                releaseDate.setText(response.body().getRelease_date());
-                overview.setText(response.body().getOverview());
-                Picasso.with(MovieDetail.this).load(BASE_URL + THUMBNAIL_SIZE + response.body().getPoster_path()).into(thumbnail);
-                ratingBar.setRating((float)(response.body().getVote_average()/2));
-                year.setText(response.body().getRelease_date());
-                StringBuilder genreStr = new StringBuilder();
-                MovieContract.Genres[] genreArray = response.body().getGenres();
-                for (int i = 0; i < genreArray.length; i++) {
-                    genreStr.append(genreArray[i].getName());
-                    if (i < genreArray.length - 1)
-                        genreStr.append(" | ");
-                }
-                censor.setText(response.body().isAdult() ? "A" : "UA");
-                genre.setText(genreStr.toString());
-                if(response.body().getTagline() != null || response.body().getTagline().length() != 0)
-                    tagline.setText(response.body().getTagline());
-                else
-                    tagline.setText("N/A");
-                duration.setText(response.body().getRuntime() / 60 + " hrs " + response.body().getRuntime() % 60 + " mins");
+        if(helper.isFavourite(id)) {
+            save.setImageResource(R.drawable.ic_favorite_white_24dp);
+            Cursor cursor = helper.getMovieDetail(id);
+            if(cursor.moveToFirst()) {
+                do {
+                    contract = new MovieContract();
+                    contract.setAdult(Boolean.parseBoolean(cursor.getString(cursor.getColumnIndex("ADULT"))));
+                    contract.setBackdrop_path(cursor.getString(cursor.getColumnIndex("BACKDROP_PATH")));
+                    contract.setHomepage(cursor.getString(cursor.getColumnIndex("HOMEPAGE")));
+                    contract.setId(cursor.getString(cursor.getColumnIndex("ID")));
+                    contract.setImdb_id(cursor.getString(cursor.getColumnIndex("IMDB_ID")));
+                    contract.setOriginal_language(cursor.getString(cursor.getColumnIndex("ORIGINAL_LANGUAGE")));
+                    contract.setOriginal_title(cursor.getString(cursor.getColumnIndex("ORIGINAL_TITLE")));
+                    contract.setOverview(cursor.getString(cursor.getColumnIndex("OVERVIEW")));
+                    contract.setPopularity(cursor.getDouble(cursor.getColumnIndex("POPULARITY")));
+                    contract.setPoster_path(cursor.getString(cursor.getColumnIndex("POSTER_PATH")));
+                    contract.setRelease_date(cursor.getString(cursor.getColumnIndex("RELEASE_DATE")));
+                    contract.setRuntime(cursor.getInt(cursor.getColumnIndex("RUNTIME")));
+                    contract.setStatus(cursor.getString(cursor.getColumnIndex("STATUS")));
+                    contract.setTagline(cursor.getString(cursor.getColumnIndex("TAGLINE")));
+                    contract.setTitle(cursor.getString(cursor.getColumnIndex("TITLE")));
+                    contract.setVote_count(cursor.getInt(cursor.getColumnIndex("VOTE_AVERAGE")));
+                    contract.setVote_count(cursor.getInt(cursor.getColumnIndex("VOTE_COUNT")));
+
+                    updateUI(contract);
+                }while (cursor.moveToNext());
             }
+        }else {
+            save.setImageResource(R.drawable.ic_favorite_border_white_24dp);
+            api.getMovieDetails(id).enqueue(new Callback<MovieContract>() {
+                @Override
+                public void onResponse(Call<MovieContract> call, Response<MovieContract> response) {
+                    contract = response.body();
+                    updateUI(contract);
+                }
 
+                @Override
+                public void onFailure(Call<MovieContract> call, Throwable t) {
+                    t.printStackTrace();
+                }
+            });
+        }
+        helper.close();
+
+        save.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFailure(Call<MovieContract> call, Throwable t) {
-                t.printStackTrace();
+            public void onClick(View v) {
+                helper = new DBHelper(MovieDetail.this);
+                if(helper.isFavourite(id)) {
+                    helper.removeFromFavourite(id);
+                    save.setImageResource(R.drawable.ic_favorite_border_white_24dp);
+                    Toast.makeText(MovieDetail.this, getResources().getString(R.string.movie_removed), Toast.LENGTH_LONG).show();
+                }else {
+                    if(contract != null) {
+                        long result = helper.addToFavourite(contract);
+                        if (result != -1) {
+                            save.setImageResource(R.drawable.ic_favorite_white_24dp);
+                            Toast.makeText(MovieDetail.this, getResources().getString(R.string.movie_added), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
+                helper.close();
             }
         });
 
@@ -120,5 +162,21 @@ public class MovieDetail extends AppCompatActivity {
         reviewBundle.putString("ID", id);
         fragment.setArguments(reviewBundle);
         getSupportFragmentManager().beginTransaction().replace(R.id.reviews, fragment).commit();
+    }
+
+    public void updateUI(MovieContract contract) {
+        Picasso.with(MovieDetail.this).load(BASE_URL + SIZE + contract.getPoster_path()).into(poster);
+        movieName.setText(contract.getOriginal_title());
+        releaseDate.setText(contract.getRelease_date());
+        overview.setText(contract.getOverview());
+        Picasso.with(MovieDetail.this).load(BASE_URL + THUMBNAIL_SIZE + contract.getPoster_path()).into(thumbnail);
+        ratingBar.setRating((float)(contract.getVote_average()/2));
+        year.setText(contract.getRelease_date());
+        censor.setText(contract.isAdult() ? "A" : "UA");
+        if(contract.getTagline() != null || contract.getTagline().length() != 0)
+            tagline.setText(contract.getTagline());
+        else
+            tagline.setText("N/A");
+        duration.setText(contract.getRuntime() / 60 + " hrs " + contract.getRuntime() % 60 + " mins");
     }
 }

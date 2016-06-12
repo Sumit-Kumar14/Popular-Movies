@@ -1,6 +1,7 @@
 package com.infinity.dev.popularmovies;
 
 import android.app.Activity;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -14,9 +15,13 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import database.DBHelper;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -58,11 +63,6 @@ public class PlaceholderFragment extends Fragment{
         moviesGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                /*
-                Intent detailIntent = new Intent(getActivity(), MovieDetail.class);
-                detailIntent.putExtra("ID", resultObj.getMoviesList().get(position).getId());
-                startActivity(detailIntent);
-                */
                 listener.onItemSelected(resultObj.getMoviesList().get(position).getId());
             }
         });
@@ -120,6 +120,8 @@ public class PlaceholderFragment extends Fragment{
             getMovies("popular", 1);
         else if(type.equals("TOP_RATED"))
             getMovies("top_rated", 1);
+        else if(type.equals("FAVOURITE"))
+            getFavouriteMovies();
     }
 
     private void getMovies(String type, int page) {
@@ -139,11 +141,34 @@ public class PlaceholderFragment extends Fragment{
             public void onFailure(Call<Result> call, Throwable t) {
                 t.printStackTrace();
                 if(t instanceof IOException)
-                    showSnack(rootView, "No or poor internet connection", R.color.red);
+                    showSnack(getView(), getResources().getString(R.string.network_error), R.color.red);
                 else
-                    showSnack(rootView, "Something went wrong. Please try again later.", R.color.red);
+                    showSnack(getView(), getResources().getString(R.string.server_error), R.color.red);
             }
         });
+    }
+
+    public void getFavouriteMovies() {
+        List<MovieContract> list = new ArrayList<>();
+
+        DBHelper helper = new DBHelper(getActivity());
+        Cursor cursor = helper.getFavourite();
+        if(cursor.moveToFirst()) {
+            swipeRefreshLayout.setRefreshing(false);
+            resultObj.setPage(1);
+            resultObj.setTotal_pages(1);
+            resultObj.setTotal_results(cursor.getCount());
+            do {
+                MovieContract contract = new MovieContract();
+                contract.setId(cursor.getString(cursor.getColumnIndex("ID")));
+                contract.setOriginal_title(cursor.getString(cursor.getColumnIndex("ORIGINAL_TITLE")));
+                contract.setPoster_path(cursor.getString(cursor.getColumnIndex("POSTER_PATH")));
+                list.add(contract);
+            }while (cursor.moveToNext());
+            resultObj.getMoviesList().addAll(list);
+            adapter.notifyDataSetChanged();
+            loading = false;
+        }
     }
 
     @Override
@@ -152,14 +177,15 @@ public class PlaceholderFragment extends Fragment{
         listener = (OnItemSelectedListener) activity;
     }
 
-    public Snackbar showSnack(View view, String msg, int color) {
-        Snackbar snack = Snackbar.make(view, msg, Snackbar.LENGTH_LONG);
-        snack.setActionTextColor(ContextCompat.getColor(getActivity(), R.color.white));
-        ViewGroup group = (ViewGroup) snack.getView();
-        TextView tv = (TextView) group.findViewById(android.support.design.R.id.snackbar_text);
-        tv.setTextColor(Color.WHITE);
-        group.setBackgroundColor(ContextCompat.getColor(getActivity(), color));
-        snack.show();
-        return snack;
+    public void showSnack(View view, String msg, int color) {
+        if(view != null) {
+            Snackbar snack = Snackbar.make(view, msg, Snackbar.LENGTH_LONG);
+            snack.setActionTextColor(ContextCompat.getColor(getActivity(), R.color.white));
+            ViewGroup group = (ViewGroup) snack.getView();
+            TextView tv = (TextView) group.findViewById(android.support.design.R.id.snackbar_text);
+            tv.setTextColor(Color.WHITE);
+            group.setBackgroundColor(ContextCompat.getColor(getActivity(), color));
+            snack.show();
+        }
     }
 }

@@ -39,7 +39,7 @@ public class ItemListActivity extends AppCompatActivity implements OnItemSelecte
         topRated.setArguments(topRatedData);
 
         Bundle favData = new Bundle();
-        favData.putString("TYPE", "favourite");
+        favData.putString("TYPE", "FAVOURITE");
         favourite = new PlaceholderFragment();
         favourite.setArguments(favData);
 

@@ -9,7 +9,6 @@ import java.io.Serializable;
 public class MovieContract implements Serializable{
     private boolean adult;
     private String backdrop_path;
-    private Genres[] genres;
     private String homepage;
     private String id;
     private String imdb_id;
@@ -170,34 +169,5 @@ public class MovieContract implements Serializable{
 
     public void setVote_count(int vote_count) {
         this.vote_count = vote_count;
-    }
-
-    public Genres[] getGenres() {
-        return genres;
-    }
-
-    public void setGenres(Genres[] genres) {
-        this.genres = genres;
-    }
-
-    public class Genres {
-        private int id;
-        private String name;
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
     }
 }

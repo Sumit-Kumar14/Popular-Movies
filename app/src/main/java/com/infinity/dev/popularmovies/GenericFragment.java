@@ -100,9 +100,9 @@ public class GenericFragment extends Fragment {
                         public void onFailure(Call<CastingContract> call, Throwable t) {
                             t.printStackTrace();
                             if(t instanceof IOException)
-                                showSnack(view, "No or poor internet connection", R.color.red);
+                                showSnack(getView(), getResources().getString(R.string.network_error), R.color.red);
                             else
-                                showSnack(view, "Something went wrong. Please try again later.", R.color.red);
+                                showSnack(getView(), getResources().getString(R.string.server_error), R.color.red);
                         }
                     });
                 }
@@ -112,12 +112,14 @@ public class GenericFragment extends Fragment {
     }
 
     public void showSnack(View view, String msg, int color) {
-        Snackbar snack = Snackbar.make(view, msg, Snackbar.LENGTH_LONG);
-        snack.setActionTextColor(ContextCompat.getColor(getActivity(), R.color.white));
-        ViewGroup group = (ViewGroup) snack.getView();
-        TextView tv = (TextView) group.findViewById(android.support.design.R.id.snackbar_text);
-        tv.setTextColor(Color.WHITE);
-        group.setBackgroundColor(ContextCompat.getColor(getActivity(), color));
-        snack.show();
+        if(view != null) {
+            Snackbar snack = Snackbar.make(view, msg, Snackbar.LENGTH_LONG);
+            snack.setActionTextColor(ContextCompat.getColor(getActivity(), R.color.white));
+            ViewGroup group = (ViewGroup) snack.getView();
+            TextView tv = (TextView) group.findViewById(android.support.design.R.id.snackbar_text);
+            tv.setTextColor(Color.WHITE);
+            group.setBackgroundColor(ContextCompat.getColor(getActivity(), color));
+            snack.show();
+        }
     }
 }

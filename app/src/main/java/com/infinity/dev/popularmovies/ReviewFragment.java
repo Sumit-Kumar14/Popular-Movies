@@ -1,14 +1,19 @@
 package com.infinity.dev.popularmovies;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import java.io.IOException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -57,8 +62,24 @@ public class ReviewFragment extends Fragment {
             @Override
             public void onFailure(Call<ReviewsContract> call, Throwable t) {
                 t.printStackTrace();
+                if(t instanceof IOException)
+                    showSnack(getView(), "No or poor internet connection", R.color.red);
+                else
+                    showSnack(getView(), "Something went wrong. Please try again later.", R.color.red);
             }
         });
         return view;
+    }
+
+    public void showSnack(View view, String msg, int color) {
+        if(view != null) {
+            Snackbar snack = Snackbar.make(view, msg, Snackbar.LENGTH_LONG);
+            snack.setActionTextColor(ContextCompat.getColor(getActivity(), R.color.white));
+            ViewGroup group = (ViewGroup) snack.getView();
+            TextView tv = (TextView) group.findViewById(android.support.design.R.id.snackbar_text);
+            tv.setTextColor(Color.WHITE);
+            group.setBackgroundColor(ContextCompat.getColor(getActivity(), color));
+            snack.show();
+        }
     }
 }
