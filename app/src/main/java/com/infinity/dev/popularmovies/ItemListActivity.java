@@ -1,19 +1,22 @@
 package com.infinity.dev.popularmovies;
 
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class ItemListActivity extends AppCompatActivity implements OnItemSelectedListener{
+
+    private boolean mTwoPane;
 
     SectionsPagerAdapter mSectionsPagerAdapter;
     ViewPager mViewPager;
@@ -49,6 +52,10 @@ public class MainActivity extends AppCompatActivity {
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         initFragments();
+
+        if (findViewById(R.id.item_detail_container) != null) {
+            mTwoPane = true;
+        }
     }
 
     private void initFragments(){
@@ -112,6 +119,24 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public CharSequence getPageTitle(int position) {
             return title[position];
+        }
+    }
+
+    public void onItemSelected(String id) {
+        if (mTwoPane) {
+            Bundle arguments = new Bundle();
+            arguments.putString("ID", id);
+            MovieDetailFragment fragment = new MovieDetailFragment();
+            fragment.setArguments(arguments);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.item_detail_container, fragment)
+                    .commit();
+        } else {
+            Context context = this;
+            Intent intent = new Intent(context, MovieDetail.class);
+            intent.putExtra("ID", id);
+
+            context.startActivity(intent);
         }
     }
 }

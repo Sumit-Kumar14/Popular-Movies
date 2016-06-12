@@ -1,8 +1,5 @@
 package com.infinity.dev.popularmovies;
 
-/**
- * Created by sumitkumar on 3/6/16.
- */
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -18,6 +15,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import java.io.IOException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -100,6 +99,10 @@ public class GenericFragment extends Fragment {
                         @Override
                         public void onFailure(Call<CastingContract> call, Throwable t) {
                             t.printStackTrace();
+                            if(t instanceof IOException)
+                                showSnack(view, "No or poor internet connection", R.color.red);
+                            else
+                                showSnack(view, "Something went wrong. Please try again later.", R.color.red);
                         }
                     });
                 }

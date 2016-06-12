@@ -2,9 +2,6 @@ package com.infinity.dev.popularmovies;
 
 import java.util.List;
 
-/**
- * Created by sumitkumar on 3/6/16.
- */
 public class CastingContract {
 
     private String id;

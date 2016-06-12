@@ -1,8 +1,11 @@
 package com.infinity.dev.popularmovies;
 
-import android.content.Intent;
+import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +13,9 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.TextView;
+
+import java.io.IOException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -20,24 +26,29 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class PlaceholderFragment extends Fragment{
 
     private static final String TAG = PlaceholderFragment.class.getSimpleName();
+
     Result resultObj = new Result();
     GridView moviesGrid;
     CustomAdapter adapter;
     boolean loading = true;
     SwipeRefreshLayout swipeRefreshLayout;
     String type;
+    View rootView;
+
     Retrofit retrofit = new Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl("http://api.themoviedb.org/3/movie/")
             .build();
     MoviesAPI api = retrofit.create(MoviesAPI.class);
 
+    OnItemSelectedListener listener;
+
     public PlaceholderFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         type = getArguments().getString("TYPE");
         moviesGrid = (GridView) rootView.findViewById(R.id.moviesGrid);
@@ -47,9 +58,12 @@ public class PlaceholderFragment extends Fragment{
         moviesGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                /*
                 Intent detailIntent = new Intent(getActivity(), MovieDetail.class);
                 detailIntent.putExtra("ID", resultObj.getMoviesList().get(position).getId());
                 startActivity(detailIntent);
+                */
+                listener.onItemSelected(resultObj.getMoviesList().get(position).getId());
             }
         });
 
@@ -124,7 +138,28 @@ public class PlaceholderFragment extends Fragment{
             @Override
             public void onFailure(Call<Result> call, Throwable t) {
                 t.printStackTrace();
+                if(t instanceof IOException)
+                    showSnack(rootView, "No or poor internet connection", R.color.red);
+                else
+                    showSnack(rootView, "Something went wrong. Please try again later.", R.color.red);
             }
         });
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        listener = (OnItemSelectedListener) activity;
+    }
+
+    public Snackbar showSnack(View view, String msg, int color) {
+        Snackbar snack = Snackbar.make(view, msg, Snackbar.LENGTH_LONG);
+        snack.setActionTextColor(ContextCompat.getColor(getActivity(), R.color.white));
+        ViewGroup group = (ViewGroup) snack.getView();
+        TextView tv = (TextView) group.findViewById(android.support.design.R.id.snackbar_text);
+        tv.setTextColor(Color.WHITE);
+        group.setBackgroundColor(ContextCompat.getColor(getActivity(), color));
+        snack.show();
+        return snack;
     }
 }

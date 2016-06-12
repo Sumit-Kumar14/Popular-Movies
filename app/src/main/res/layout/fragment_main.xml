@@ -16,7 +16,9 @@
             android:numColumns="auto_fit"
             android:id="@+id/moviesGrid"
             android:verticalSpacing="1dp"
-            android:horizontalSpacing="1dp">
+            android:horizontalSpacing="1dp"
+            android:stretchMode="columnWidth"
+            android:gravity="center">
         </GridView>
     </android.support.v4.widget.SwipeRefreshLayout>
 

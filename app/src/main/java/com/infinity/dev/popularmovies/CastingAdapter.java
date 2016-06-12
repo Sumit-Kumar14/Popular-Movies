@@ -1,8 +1,5 @@
 package com.infinity.dev.popularmovies;
 
-/**
- * Created by sumitkumar on 3/6/16.
- */
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
